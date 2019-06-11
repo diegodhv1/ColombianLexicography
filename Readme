@@ -1,0 +1,6 @@
+## Commands to clone repository
+git clone https://github.com/diegodhv1/LexicografiaColombiana.git
+
+## Comanads to push repository LexicografiaColombiana
+git remote add origin https://github.com/diegodhv1/LexicografiaColombiana.git
+git push -u origin master
