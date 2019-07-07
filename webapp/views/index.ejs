@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://cdn.neo4jlabs.com/neovis.js/v1.0.0/neovis.js"></script>
+</head>
+
+
+<body onload="draw()">
+
+  <h1>Diccionario de Colombianismos</h1>
+
+  <form method="post" action="/lema/add">
+    <fieldset disabled="disabled">
+      <label>Nuevo lema</label>
+      <br>
+      <input type="text" name="nuevo_lema">
+      <br>
+      <input type="submit" value="Enviar">
+    </fieldset>
+  </form>
+  <br>
+  <form method="get" action="/search">
+    <label>Buscar definiciones</label>
+    <br>
+    <input type="text" name="buscar_def">
+    <br>
+    <input type="submit" value="Buscar" id="searchButton">
+  </form>
+
+
+  <h2>Definiciones</h2>
+  <%/* %> console.log(<%=definiciones[0]%>);<% */%>
+  <% if (typeof definiciones[0] != 'undefined') { %>
+  <h3>"<%= definiciones[0].palabra %>"</h3>
+  <ul>
+    <% definiciones.forEach(function(def){ %>
+    <li><%= def.definicion %></li>
+    <% }) %>
+  </ul>
+  <% } else { %>
+  <h3>Lo sentimos. El término "<%=busq%>" no se encuentra en nuestro diccionario.</h3>
+  <% } %>
+  <script type="text/javascript">
+    console.log("<%=busq%>");
+    var viz;
+
+    function draw() {
+      var config = {
+        container_id: "viz",
+        server_url: "bolt://localhost:7687",
+        server_user: "neo4j",
+        server_password: "123",
+
+        labels: {
+          "Lema": {
+            caption: "palabra",
+            size: 1.0
+          },
+          "Definicion": {
+            caption: "enunciadoDef",
+            size: 1.0
+          }
+        },
+        relationships: {
+          "ES": {
+            caption: false,
+            color: '#ff0000'
+          },
+          "TIENE": {
+            caption: false,
+            community: "community",
+          }
+        },
+        initial_cypher: 'MATCH (n)-[r:ES]-(m) WHERE n.palabra = "<%=busq%>" RETURN n, m, r'
+      };
+
+      viz = new NeoVis.default(config);
+      viz.render();
+      //viz.render();
+    }
+  </script>
+
+  <div id="viz" style="height: 600px;"></div>
+
+  <%/* %>
+  <h2>Entradas (Lemas)</h2>
+  <ul>
+    <% lemas.forEach(function(lema){ %>
+    <li><%= lema.palabra %></li>
+    <% }) %>
+  </ul>
+  <% */%>
+
+</body>
+
+</html>
